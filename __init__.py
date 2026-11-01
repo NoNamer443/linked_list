@@ -37,7 +37,7 @@ class DataIterator[T](LinkedIterator[T]):
 class NodeIterator[T](LinkedIterator[T]):
     __slots__ = ()
 
-    def __next__(self) -> Node[T]:
+    def __next__(self, /) -> Node[T]:
         if self.node is None:
             raise StopIteration
         result = self.node
@@ -46,7 +46,7 @@ class NodeIterator[T](LinkedIterator[T]):
 
 
 class LinkedList[T]:
-    __slots__ = ("node", "__weakref__")
+    __slots__ = ("head", "__weakref__")
 
     @classmethod
     def create(cls, data: Iterable[T]) -> Self:
@@ -57,26 +57,26 @@ class LinkedList[T]:
             raise ValueError("data was empty") from None
 
         result = cls(first)
-        tail = result.node
+        tail = result.head
         for i in it:
             tail.next = Node(i)
             tail = tail.next
         return result
 
     def __init__(self, /, data: T) -> None:
-        self.node = Node(data)
+        self.head = Node(data)
 
     def __iter__(self, /) -> DataIterator[T]:
-        return DataIterator(self.node)
+        return DataIterator(self.head)
 
     def iter_node(self, /) -> NodeIterator[T]:
-        return NodeIterator(self.node)
+        return NodeIterator(self.head)
 
     def add_at_head(self, /, data: T) -> None:
-        self.node = Node(data, self.node)
+        self.head = Node(data, self.head)
 
     def add_at_tail(self, /, data: T) -> None:
-        node = self.node
+        node = self.head
         while node.next is not None:
             node = node.next
         node.next = Node(data)
