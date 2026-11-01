@@ -5,11 +5,13 @@ from collections.abc import Iterable
 
 @dataclass(repr=False, slots=True, eq=False, match_args=False, weakref_slot=True)
 class Node[T]:
+    """单向链表节点"""
     data: T
     next: None | Self = None
 
 
 class LinkedIterator[T](metaclass=ABCMeta):
+    """单向链表迭代器基类"""
     __slots__ = ("node", "__weakref__")
 
     def __init__(self, /, start: None | Node[T]) -> None:
@@ -24,6 +26,7 @@ class LinkedIterator[T](metaclass=ABCMeta):
 
 
 class DataIterator[T](LinkedIterator[T]):
+    """单向链表数据迭代器"""
     __slots__ = ()
 
     def __next__(self, /) -> T:
@@ -35,6 +38,7 @@ class DataIterator[T](LinkedIterator[T]):
 
 
 class NodeIterator[T](LinkedIterator[T]):
+    """单向链表节点迭代器"""
     __slots__ = ()
 
     def __next__(self, /) -> Node[T]:
@@ -46,10 +50,16 @@ class NodeIterator[T](LinkedIterator[T]):
 
 
 class LinkedList[T]:
+    """单向链表，至少需要包含一个节点
+
+    - LinkedList: 创建一个单节点链表
+    - LinkedList.from_iterable: 从可迭代对象创建单向链表
+    """
     __slots__ = ("head", "__weakref__")
 
     @classmethod
-    def create(cls, data: Iterable[T]) -> Self:
+    def from_iterable(cls, data: Iterable[T]) -> Self:
+        """从可迭代对象创建单向链表"""
         it = iter(data)
         try:
             first = next(it)
@@ -64,6 +74,7 @@ class LinkedList[T]:
         return result
 
     def __init__(self, /, data: T) -> None:
+        """创建单节点单向链表"""
         self.head = Node(data)
 
     def __iter__(self, /) -> DataIterator[T]:
@@ -86,15 +97,15 @@ class LinkedList[T]:
 
     def insert(self, /, index: int, data: T) -> None:
         if index < 0:
-            pos_index = len(self) + index
-            if pos_index < 0:
-                raise IndexError(f"index {index} out of range")
+            index = len(self) + index
+            if index < 0:
+                index = 0
         if index == 0:
             self.add_at_head(data)
             return
         prev = self.head
         for _ in range(index - 1):
             if prev.next is None:
-                raise IndexError(f"index {index} out of range")
+                break
             prev = prev.next
         prev.next = Node(data, prev.next)
