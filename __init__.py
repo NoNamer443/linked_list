@@ -10,7 +10,7 @@ class Node[T]:
 
 
 class LinkedIterator[T](metaclass=ABCMeta):
-    __slots__ = ("node",)
+    __slots__ = ("node", "__weakref__")
 
     def __init__(self, /, start: None | Node[T]) -> None:
         self.node = start
@@ -46,7 +46,7 @@ class NodeIterator[T](LinkedIterator[T]):
 
 
 class LinkedList[T]:
-    __slots__ = ("node",)
+    __slots__ = ("node", "__weakref__")
 
     @classmethod
     def _from_node(cls, node: Node[T]) -> Self:
