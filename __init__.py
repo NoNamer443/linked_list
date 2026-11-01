@@ -49,12 +49,6 @@ class LinkedList[T]:
     __slots__ = ("node", "__weakref__")
 
     @classmethod
-    def _from_node(cls, node: Node[T]) -> Self:
-        result = cls.__new__(cls)
-        result.node = node
-        return result
-
-    @classmethod
     def create(cls, data: Iterable[T]) -> Self:
         it = iter(data)
         try:
