@@ -80,3 +80,21 @@ class LinkedList[T]:
         while node.next is not None:
             node = node.next
         node.next = Node(data)
+
+    def __len__(self, /) -> int:
+        return sum(1 for _ in self)
+
+    def insert(self, /, index: int, data: T) -> None:
+        if index < 0:
+            pos_index = len(self) + index
+            if pos_index < 0:
+                raise IndexError(f"index {index} out of range")
+        if index == 0:
+            self.add_at_head(data)
+            return
+        prev = self.head
+        for _ in range(index - 1):
+            if prev.next is None:
+                raise IndexError(f"index {index} out of range")
+            prev = prev.next
+        prev.next = Node(data, prev.next)
