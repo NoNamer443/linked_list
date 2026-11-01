@@ -52,8 +52,8 @@ class NodeIterator[T](LinkedIterator[T]):
 class LinkedList[T]:
     """单向链表，至少需要包含一个节点
 
-    - LinkedList: 创建一个单节点链表
-    - LinkedList.from_iterable: 从可迭代对象创建单向链表
+    - `LinkedList`: 创建一个单节点链表
+    - `LinkedList.from_iterable`: 从可迭代对象创建单向链表
     """
     __slots__ = ("head", "__weakref__")
 
@@ -109,3 +109,14 @@ class LinkedList[T]:
                 break
             prev = prev.next
         prev.next = Node(data, prev.next)
+
+    def has_cycle(self, /) -> bool:
+        """判断链表是否有环"""
+        slow = fast = self.head
+        while fast is not None and fast.next is not None:
+            assert slow is not None # Pylance真难伺候
+            slow = slow.next
+            fast = fast.next.next
+            if slow is fast:
+                return True
+        return False
