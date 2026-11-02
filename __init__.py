@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from abc import ABCMeta, abstractmethod
 from collections.abc import Iterable
 
-@dataclass(repr=False, slots=True, eq=False, match_args=False, weakref_slot=True)
+@dataclass(repr=False, slots=True, eq=False, weakref_slot=True)
 class Node[T]:
     """单向链表节点"""
     data: T
@@ -114,7 +114,7 @@ class LinkedList[T]:
         """判断链表是否有环"""
         slow = fast = self.head
         while fast is not None and fast.next is not None:
-            assert slow is not None # Pylance真难伺候
+            assert slow is not None, "slow is None" # Pylance真难伺候
             slow = slow.next
             fast = fast.next.next
             if slow is fast:
