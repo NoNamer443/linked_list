@@ -89,6 +89,8 @@ class LinkedList[T]:
     def iter_node(self, /) -> NodeIterator[T]:
         return NodeIterator(self.head)
 
+    iter_data = __iter__
+
     def add_at_head(self, /, data: T) -> None:
         self.head = Node(data, self.head)
 
