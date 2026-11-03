@@ -9,6 +9,12 @@ class Node[T]:
     data: T
     next: None | Self = None
 
+@dataclass(slots=True, weakref_slot=True)
+class CycleInfo:
+    """链表环信息"""
+    start: int
+    length: int
+
 
 class LinkedIterator[T](metaclass=ABCMeta):
     """单向链表迭代器基类"""
@@ -110,13 +116,34 @@ class LinkedList[T]:
             prev = prev.next
         prev.next = Node(data, prev.next)
 
-    def has_cycle(self, /) -> bool:
-        """判断链表是否有环"""
+    def cycle_info(self, /) -> None | CycleInfo:
+        """获取链表环信息，无环返回 `None`"""
         slow = fast = self.head
         while fast is not None and fast.next is not None:
-            assert slow is not None, "slow is None" # Pylance真难伺候
+            assert slow is not None
             slow = slow.next
             fast = fast.next.next
             if slow is fast:
-                return True
-        return False
+                # 1. 找环入口（同时数入口索引）
+                entry = self.head
+                assert slow is not None
+                start = 0
+                while entry is not slow:
+                    assert entry is not None
+                    assert slow is not None
+                    entry = entry.next
+                    slow = slow.next
+                    start += 1
+                assert entry is not None
+
+                # 2. 数环长（从入口绕一圈）
+                length = 1
+                node = entry.next
+                assert node is not None
+                while node is not entry:
+                    node = node.next
+                    assert node is not None
+                    length += 1
+
+                return CycleInfo(start, length)
+        return None
